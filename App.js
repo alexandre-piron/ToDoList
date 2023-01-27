@@ -1,16 +1,28 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
-import { Button } from '@rneui/base';
+import { StyleSheet } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+//import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+
+import { TaskSreen, ListSreen, CalendarSreen } from './components/sreens';
+
+const Tab = createBottomTabNavigator();
 
 export default function App() {
-  const AwesomeButton = () => (<Button title='Welcome'/>)
   return (
-    <View style={styles.container}>
+    /*<View style={styles.container}>
       <Text>Open up App.js to start working on your app!</Text>
       <AwesomeButton></AwesomeButton>
       <StatusBar style="auto" />
-    </View>
+    </View>*/
+    <NavigationContainer>
+      <Tab.Navigator initialRouteName="Home" >
+        <Tab.Screen name="Tasks" component={TaskSreen} />
+        <Tab.Screen name="Calendar" component={CalendarSreen} />
+        <Tab.Screen name="Lists" component={ListSreen} />
+      </Tab.Navigator>
+    </NavigationContainer>
   );
 }
 
