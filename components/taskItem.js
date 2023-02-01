@@ -1,39 +1,63 @@
-import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, } from "react-native";
+import React, {useState} from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, FlatList } from "react-native";
 import { MaterialIcons } from '@expo/vector-icons';
+import { CheckBox, Icon } from '@rneui/themed';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+
 
 function TaskItem (props) {
+    const [check, setCheck] = useState(false);
+
     return (
-        <View style={styles.container}>
+        <TouchableOpacity onPress={() => props.deleteTask()}>
+            <View style={styles.container}>
             <View style={styles.taskContainer}>
+                {/* <CheckBox
+                    center
+                    title={props.task}
+                    checkedIcon="dot-circle-o"
+                    uncheckedIcon="circle-o"
+                    checked={check}
+                    onPress={() => setCheck(!check)}
+                    style={styles.task}
+                    /> */}
                 <Text style={styles.task}>{props.task}</Text>
                 <TouchableOpacity onPress={() => props.deleteTask()}>
-                    <MaterialIcons style={styles.delete} name="delete" size={18} color='#fff' />
+                    <Icon style={styles.delete} name="delete" size={20} color='#fff' type='material' />
                 </TouchableOpacity>
             </View>
-        </View>
+            </View>
+        </TouchableOpacity>
     );
 }
 
-export { TaskItem };
+function ItemTaskList () {
+    const [itemList,setItemList] = useState([])
+    const getItem = async () => {
+        try {
+            const jsonlist =  await AsyncStorage.getItem('tasks')
+            setItemList(jsonlist != null ? JSON.parse(jsonlist) : null);
+        } catch(e) {
+            console.log(e);
+        }
+        
+    }
+    getItem()
+
+    return (
+        <FlatList
+            data={itemList}
+            renderItem={({item}) => <TaskItem id={item.id} task={item.title}>{item.description}</TaskItem>}
+            keyExtractor={item => item.id}
+        />
+        );
+}
 
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
         marginHorizontal: 20,
-    },
-    indexContainer: {
-        backgroundColor: '#3E3364',
-        borderRadius: 12,
-        marginRight: 10,
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: 50,
-        height: 50,
-    },
-    index: {
-        color: '#fff',
-        fontSize: 20,
     },
     taskContainer: {
         backgroundColor: '#3E3364',
@@ -55,3 +79,5 @@ const styles = StyleSheet.create({
         marginLeft: 10,
     },
 });
+
+export { TaskItem, ItemTaskList };
