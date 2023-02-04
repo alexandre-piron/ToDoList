@@ -1,34 +1,49 @@
 import React, {useState} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, FlatList } from "react-native";
-import { MaterialIcons } from '@expo/vector-icons';
-import { CheckBox, Icon } from '@rneui/themed';
+import { Icon } from '@rneui/themed';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-
+import { CheckBox } from './Checkbox';
 
 function TaskItem (props) {
-    const [check, setCheck] = useState(false);
+    const [check, setCheck] = useState(props.checked);
 
     return (
-        <TouchableOpacity onPress={() => props.deleteTask()}>
-            <View style={styles.container}>
-            <View style={styles.taskContainer}>
-                {/* <CheckBox
-                    center
-                    title={props.task}
-                    checkedIcon="dot-circle-o"
-                    uncheckedIcon="circle-o"
-                    checked={check}
-                    onPress={() => setCheck(!check)}
-                    style={styles.task}
-                    /> */}
-                <Text style={styles.task}>{props.task}</Text>
-                <TouchableOpacity onPress={() => props.deleteTask()}>
-                    <Icon style={styles.delete} name="delete" size={20} color='#fff' type='material' />
+        <View style={styles.container}>
+        <View style={styles.taskContainer}>
+            <CheckBox
+                label={props.task}
+                checked={check}
+                handleClick={async () => {  setCheck(!check)
+                                            try {
+                                            const jsonlist = await AsyncStorage.getItem('tasks');
+                                            const Tasks = jsonlist != null ? JSON.parse(jsonlist) : [];
+                                            //action recup et modif
+                                            const indelem = Tasks.findIndex(Task => Task['id'] === props.id);
+                                            Tasks[indelem]['checked'] = !check;
+                                            const listTasks = JSON.stringify(Tasks)
+                                            try {
+                                                await AsyncStorage.setItem("tasks", listTasks);
+                                                console.log("OK.");
+                                            } catch (e) {
+                                                console.log(e);
+                                            }
+                                        } catch(e) {
+                                            console.log(e);
+                                        }
+                                        }}
+            /> 
+            {/* <Text style={styles.task}>{props.task}</Text> */}
+            <View style={{flexDirection: 'row'}}>
+                <TouchableOpacity onPress={() => deleteTask(props.id)}>
+                    <Icon style={styles.delete} name="menu" size={30} color='#fff' type='ionicons' />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => editTask(props.id)}>
+                    <Icon style={styles.delete} name="delete" size={30} color='#fff' type='material' />
                 </TouchableOpacity>
             </View>
-            </View>
-        </TouchableOpacity>
+        </View>
+        </View>
     );
 }
 
@@ -48,11 +63,15 @@ function ItemTaskList () {
     return (
         <FlatList
             data={itemList}
-            renderItem={({item}) => <TaskItem id={item.id} task={item.title}>{item.description}</TaskItem>}
+            renderItem={({item}) => <TaskItem id={item.id} task={item.title} checked={item.checked}>
+                                        {item.description}
+                                    </TaskItem>}
             keyExtractor={item => item.id}
         />
         );
 }
+
+
 
 const styles = StyleSheet.create({
     container: {

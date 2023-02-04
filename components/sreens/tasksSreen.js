@@ -31,15 +31,16 @@ function TaskSreen(){
                                 const Id = idString != null ? parseInt(idString) : 0;
                                 Tasks.push({
                                     id : Id+1,
+                                    checked : false,
                                     title : taskTitle,
                                     description : taskDescription
                                 })
                                 const listTasks = JSON.stringify(Tasks)
-                                idString = toString(Id+1)
+                                idString = (Id+1).toString()
                                 try {
                                     await AsyncStorage.setItem("tasks", listTasks);
                                     await AsyncStorage.setItem("id", idString);
-                                    console.log("OK.");
+                                    console.log("OK l'élément "+idString+" ajouté.");
                                 } catch (e) {
                                     console.log(e);
                                 }
@@ -53,7 +54,7 @@ function TaskSreen(){
                 </View>
             </Modal>
             <Button  title='add' onPress={() => setModalVisible(!modalVisible)}/>
-            
+            {/*clear button pour nettoyer asyncstorage*/}
                 <Button  title='clear' onPress={
                 async () => {
                     try {
