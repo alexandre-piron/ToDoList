@@ -4,7 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { ItemTaskList } from '..';
 
-function TaskSreen(){
+function TaskScreen(){
     const [modalVisible, setModalVisible] = useState(false);
     const [taskTitle, onChangeTaskTitle] = useState('');
     const [taskDescription, onChangeTaskDescription] = useState('');
@@ -82,4 +82,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export { TaskSreen };
+export { TaskScreen };

@@ -4,7 +4,8 @@ import { StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-import { TaskSreen, ListSreen, CalendarSreen } from './components/sreens';
+
+import { TaskScreen, ListScreen, CalendarScreen } from './components/screens';
 
 const Tab = createBottomTabNavigator();
 
@@ -12,9 +13,9 @@ export default function App() {
   return (
     <NavigationContainer>
       <Tab.Navigator initialRouteName="Home" >
-        <Tab.Screen name="Tasks" component={TaskSreen} />
-        <Tab.Screen name="Calendar" component={CalendarSreen} />
-        <Tab.Screen name="Lists" component={ListSreen} />
+        <Tab.Screen name="Tasks" component={TaskScreen} />
+        <Tab.Screen name="Calendar" component={CalendarScreen} />
+        <Tab.Screen name="Lists" component={ListScreen} />
       </Tab.Navigator>
     </NavigationContainer>
   );

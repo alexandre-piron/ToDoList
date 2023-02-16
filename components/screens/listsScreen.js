@@ -1,7 +1,7 @@
 import { Text, Button, View } from 'react-native';
 
 
-function ListSreen(){
+function ListScreen(){
     return (
         <View>
             <Text>Home</Text>
@@ -13,4 +13,4 @@ function ListSreen(){
     );
 }
 
-export { ListSreen };
+export { ListScreen };
