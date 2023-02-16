@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, FlatList } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, FlatList, Modal, TextInput } from "react-native";
 import { Icon } from '@rneui/themed';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -7,42 +7,71 @@ import { CheckBox } from './Checkbox';
 
 function TaskItem (props) {
     const [check, setCheck] = useState(props.checked);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [taskTitle, onChangeTaskTitle] = useState(props.task);
+    const [taskDescription, onChangeTaskDescription] = useState(props.children);
 
     return (
         <View style={styles.container}>
-        <View style={styles.taskContainer}>
-            <CheckBox
-                label={props.task}
-                checked={check}
-                handleClick={async () => {  setCheck(!check)
-                                            try {
-                                            const jsonlist = await AsyncStorage.getItem('tasks');
-                                            const Tasks = jsonlist != null ? JSON.parse(jsonlist) : [];
-                                            //action recup et modif
-                                            const indelem = Tasks.findIndex(Task => Task['id'] === props.id);
-                                            Tasks[indelem]['checked'] = !check;
-                                            const listTasks = JSON.stringify(Tasks)
-                                            try {
-                                                await AsyncStorage.setItem("tasks", listTasks);
-                                                console.log("OK.");
-                                            } catch (e) {
+            <View style={styles.taskContainer}>
+                <CheckBox
+                    label={props.task}
+                    checked={check}
+                    handleClick={async () => {  setCheck(!check)
+                                                try {
+                                                const jsonlist = await AsyncStorage.getItem('tasks');
+                                                const Tasks = jsonlist != null ? JSON.parse(jsonlist) : [];
+                                                //action recup et modif
+                                                const indelem = Tasks.findIndex(Task => Task['id'] === props.id);
+                                                Tasks[indelem]['checked'] = !check;
+                                                const listTasks = JSON.stringify(Tasks)
+                                                try {
+                                                    await AsyncStorage.setItem("tasks", listTasks);
+                                                    console.log("OK.");
+                                                } catch (e) {
+                                                    console.log(e);
+                                                }
+                                            } catch(e) {
                                                 console.log(e);
                                             }
-                                        } catch(e) {
-                                            console.log(e);
-                                        }
-                                        }}
-            /> 
-            {/* <Text style={styles.task}>{props.task}</Text> */}
-            <View style={{flexDirection: 'row'}}>
-                <TouchableOpacity onPress={() => deleteTask(props.id)}>
-                    <Icon style={styles.delete} name="menu" size={30} color='#fff' type='ionicons' />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => editTask(props.id)}>
-                    <Icon style={styles.delete} name="delete" size={30} color='#fff' type='material' />
-                </TouchableOpacity>
+                                            }}
+                /> 
+                <View style={{flexDirection: 'row'}}>
+                    <TouchableOpacity onPress={() => {setModalVisible(true)}}>
+                        <Icon style={styles.delete} name="edit" size={30} color='#fff' type='material' />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => deleteTask(props.id)}>
+                        <Icon style={styles.delete} name="delete" size={30} color='#fff' type='material' />
+                    </TouchableOpacity>
+                </View>
+                {/* Modal qui apparait lorsqu'on (ouche l'icône pour modifier */}
+                <Modal
+                animationType="slide"
+                transparent={false}
+                visible= {modalVisible}
+                onRequestClose={() => {
+                    setModalVisible(!modalVisible);
+                }}
+            >
+                <Text>Titre</Text>
+                <TextInput onChangeText={onChangeTaskTitle} value={taskTitle} placeholder='hey'/>
+                <Text>Description</Text>
+                <TextInput onChangeText={onChangeTaskDescription} value={taskDescription} />
+                <View >
+                    <TouchableOpacity onPress={async() => {
+                            editTask(props.id,taskTitle,taskDescription)
+                            setModalVisible(!modalVisible);                   
+                        }}>
+                            <Text>ENREGISTRER</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => {
+                            setModalVisible(!modalVisible);                   
+                        }}>
+                            <Text>ANNULER</Text>
+                    </TouchableOpacity>
+                </View>
+            </Modal>
             </View>
-        </View>
         </View>
     );
 }
@@ -59,7 +88,6 @@ function ItemTaskList () {
         
     }
     getItem()
-
     return (
         <FlatList
             data={itemList}
@@ -69,6 +97,46 @@ function ItemTaskList () {
             keyExtractor={item => item.id}
         />
         );
+}
+
+const deleteTask = async(index) => {
+    try {
+        const jsonlist = await AsyncStorage.getItem('tasks');
+        const Tasks = jsonlist != null ? JSON.parse(jsonlist) : [];
+        //action recup 
+        const indelem = Tasks.findIndex(Task => Task['id'] === index);
+        // action delete
+        Tasks.splice(indelem, 1);
+        const listTasks = JSON.stringify(Tasks)
+        try {
+            await AsyncStorage.setItem("tasks", listTasks);
+            console.log("task deleted.");
+        } catch (e) {
+            console.log(e);
+        }
+    } catch(e) {
+        console.log(e);
+    }
+}
+
+const editTask = async(index,title,description) => {
+    try {
+        const jsonlist = await AsyncStorage.getItem('tasks');
+        const Tasks = jsonlist != null ? JSON.parse(jsonlist) : [];
+        //action recup et modif
+        const indelem = Tasks.findIndex(Task => Task['id'] === index);
+        Tasks[indelem]['title'] = title;
+        Tasks[indelem]['description'] = description;
+        const listTasks = JSON.stringify(Tasks)
+        try {
+            await AsyncStorage.setItem("tasks", listTasks);
+            console.log("task modified");
+        } catch (e) {
+            console.log(e);
+        }
+    } catch(e) {
+        console.log(e);
+    }
 }
 
 

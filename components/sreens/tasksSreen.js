@@ -54,7 +54,7 @@ function TaskSreen(){
                 </View>
             </Modal>
             <Button  title='add' onPress={() => setModalVisible(!modalVisible)}/>
-            {/*clear button pour nettoyer asyncstorage*/}
+            {/*clear button pour nettoyer asyncstorage
                 <Button  title='clear' onPress={
                 async () => {
                     try {
@@ -64,7 +64,7 @@ function TaskSreen(){
                     }
                     console.log('Done.')
                 }
-            }/> 
+            }/> */}
             <ItemTaskList/>
         </View>
     );
