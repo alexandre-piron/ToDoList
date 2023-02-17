@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, FlatList, Modal, TextInput } from "react-native";
 import { Icon } from '@rneui/themed';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import DateField from 'react-native-datefield';
 
 import { CheckBox } from './Checkbox';
 
@@ -10,6 +11,7 @@ function TaskItem (props) {
     const [modalVisible, setModalVisible] = useState(false);
     const [taskTitle, onChangeTaskTitle] = useState(props.task);
     const [taskDescription, onChangeTaskDescription] = useState(props.children);
+    const [taskDate, onChangeTaskDate] = useState(props.date);
 
     return (
         <View style={styles.container}>
@@ -57,9 +59,10 @@ function TaskItem (props) {
                 <TextInput onChangeText={onChangeTaskTitle} value={taskTitle} placeholder='hey'/>
                 <Text>Description</Text>
                 <TextInput onChangeText={onChangeTaskDescription} value={taskDescription} />
+                <DateField labelDate="Jour" labelMonth="Mois" labelYear="Année" onSubmit={onChangeTaskDate} value={taskDate}/>
                 <View >
                     <TouchableOpacity onPress={async() => {
-                            editTask(props.id,taskTitle,taskDescription)
+                            editTask(props.id,taskTitle,taskDescription, taskDate)
                             setModalVisible(!modalVisible);                   
                         }}>
                             <Text>ENREGISTRER</Text>
@@ -91,7 +94,7 @@ function ItemTaskList () {
     return (
         <FlatList
             data={itemList}
-            renderItem={({item}) => <TaskItem id={item.id} task={item.title} checked={item.checked}>
+            renderItem={({item}) => <TaskItem id={item.id} task={item.title} checked={item.checked} date={item.date}>
                                         {item.description}
                                     </TaskItem>}
             keyExtractor={item => item.id}
@@ -119,7 +122,7 @@ const deleteTask = async(index) => {
     }
 }
 
-const editTask = async(index,title,description) => {
+const editTask = async(index,title,description,date) => {
     try {
         const jsonlist = await AsyncStorage.getItem('tasks');
         const Tasks = jsonlist != null ? JSON.parse(jsonlist) : [];
@@ -127,10 +130,12 @@ const editTask = async(index,title,description) => {
         const indelem = Tasks.findIndex(Task => Task['id'] === index);
         Tasks[indelem]['title'] = title;
         Tasks[indelem]['description'] = description;
+        Tasks[indelem]['date'] = date;
         const listTasks = JSON.stringify(Tasks)
         try {
             await AsyncStorage.setItem("tasks", listTasks);
             console.log("task modified");
+            console.log(listTasks);
         } catch (e) {
             console.log(e);
         }

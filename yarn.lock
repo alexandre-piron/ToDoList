@@ -5540,6 +5540,11 @@ react-native-codegen@^0.70.6:
     jscodeshift "^0.13.1"
     nullthrows "^1.1.1"
 
+react-native-datefield@^0.3.6:
+  version "0.3.6"
+  resolved "https://registry.yarnpkg.com/react-native-datefield/-/react-native-datefield-0.3.6.tgz#5c5b95c10f679ba03716821cbb31dcecfa277003"
+  integrity sha512-BPhvNrCeJBRGfW5r0UBq+nnhmmIIjXO9EMkF5bhi/onJUdn6PowU5pbgWmY77C0FL3vyk6EZOQ+9LUhiqM1sLg==
+
 react-native-gradle-plugin@^0.70.3:
   version "0.70.3"
   resolved "https://registry.npmjs.org/react-native-gradle-plugin/-/react-native-gradle-plugin-0.70.3.tgz"

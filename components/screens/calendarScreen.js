@@ -5,7 +5,7 @@ import { Calendar } from 'react-native-calendars';
 function CalendarScreen() {
   return (
     <SafeAreaView style={styles.container}>
-      <Calendar onDayPress={(day) => console.log('Selected date: ', day.dateString) }/>
+      <Calendar onDayPress={(day) => console.log('Selected date: ', day) }/>
     </SafeAreaView>
   );
 };
