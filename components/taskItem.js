@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, FlatList, Modal, TextInput } from "react-native";
 import { Icon } from '@rneui/themed';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Picker } from '@react-native-picker/picker';
 
 import { CheckBox } from './Checkbox';
 
@@ -10,6 +11,7 @@ function TaskItem (props) {
     const [modalVisible, setModalVisible] = useState(false);
     const [taskTitle, onChangeTaskTitle] = useState(props.task);
     const [taskDescription, onChangeTaskDescription] = useState(props.children);
+    const [selectedTag, setSelectedTag] = useState("N");
 
     return (
         <View style={styles.container}>
@@ -57,9 +59,20 @@ function TaskItem (props) {
                 <TextInput onChangeText={onChangeTaskTitle} value={taskTitle} placeholder='hey'/>
                 <Text>Description</Text>
                 <TextInput onChangeText={onChangeTaskDescription} value={taskDescription} />
+                <Text>Tag ou Liste</Text>
+                <Picker
+                    selectedValue={selectedTag}
+                    style={{ height: 50, width: 150 }}
+                    onValueChange={(itemValue, itemIndex) => setSelectedTag(itemValue)}
+                >
+                    <Picker.Item label="Important et Urgent" value="IU" />
+                    <Picker.Item label="Important uniquement" value="I" />
+                    <Picker.Item label="Urgent uniquement" value="U" />
+                    <Picker.Item label="Ni l'un, Ni l'autre " value="N" />
+                </Picker>
                 <View >
                     <TouchableOpacity onPress={async() => {
-                            editTask(props.id,taskTitle,taskDescription)
+                            editTask(props.id,taskTitle,taskDescription,selectedTag)
                             setModalVisible(!modalVisible);                   
                         }}>
                             <Text>ENREGISTRER</Text>
@@ -91,7 +104,12 @@ function ItemTaskList () {
     return (
         <FlatList
             data={itemList}
-            renderItem={({item}) => <TaskItem id={item.id} task={item.title} checked={item.checked}>
+            renderItem={({item}) => <TaskItem 
+                                        id={item.id} 
+                                        task={item.title} 
+                                        checked={item.checked} 
+                                        tag={item.tag}  
+                                    >
                                         {item.description}
                                     </TaskItem>}
             keyExtractor={item => item.id}
@@ -119,7 +137,7 @@ const deleteTask = async(index) => {
     }
 }
 
-const editTask = async(index,title,description) => {
+const editTask = async(index,title,description,tag) => {
     try {
         const jsonlist = await AsyncStorage.getItem('tasks');
         const Tasks = jsonlist != null ? JSON.parse(jsonlist) : [];
@@ -127,6 +145,7 @@ const editTask = async(index,title,description) => {
         const indelem = Tasks.findIndex(Task => Task['id'] === index);
         Tasks[indelem]['title'] = title;
         Tasks[indelem]['description'] = description;
+        Tasks[indelem]['tag'] = tag;
         const listTasks = JSON.stringify(Tasks)
         try {
             await AsyncStorage.setItem("tasks", listTasks);
