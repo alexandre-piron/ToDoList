@@ -22,11 +22,14 @@ function TaskScreen(){
                     setModalVisible(!modalVisible);
                 }} 
             >
-                <View style={styles.inputField}>
-                    <TextInput onChangeText={onChangeTaskTitle} value={taskTitle} placeholder={'Ajouter une tâche'} placeholderTextColor={'#000000'}/>
-                    <TextInput onChangeText={onChangeTaskDescription} value={taskDescription} placeholder={'Description...'} placeholderTextColor={'#000000'}/>
-                    <DateField labelDate="Jour" labelMonth="Mois" labelYear="Année" onSubmit={onChangeTaskDate} value={taskDate}/>
-                    <View >
+                <View style={{flex:1,justifyContent: 'flex-end',}}>
+                <View style={styles.modalAddTask}>
+                    <View>
+                        <TextInput onChangeText={onChangeTaskTitle} value={taskTitle} placeholder={'Ajouter une tâche'} style={{color:'#daceeb'}} placeholderTextColor={'#daceeb'}/>
+                        <TextInput onChangeText={onChangeTaskDescription} value={taskDescription} placeholder={'Description...'} placeholderTextColor={'#daceeb'}/>
+                        <DateField labelDate="Jour" labelMonth="Mois" labelYear="Année" onSubmit={onChangeTaskDate} value={taskDate} style={{color:'#daceeb'}}/>
+                    </View>
+                    <View style={styles.saveButton}>
                         <TouchableOpacity onPress={async() => {
                             try {
                                 const jsonlist = await AsyncStorage.getItem('tasks');
@@ -55,10 +58,12 @@ function TaskScreen(){
                                 console.log(e);
                             } setModalVisible(!modalVisible);                   
                         }}>
-                            <Text>ENREGISTRER</Text>
+                            <Text style={{color:'#daceeb'}}>ENREGISTRER</Text>
                         </TouchableOpacity>
                     </View>
+                </View>    
                 </View>
+                
             </Modal>
             <ItemTaskList/>
             <View style={styles.addbuttoncontainer}>
@@ -87,11 +92,13 @@ function TaskScreen(){
 
 
 const styles = StyleSheet.create({
-    inputField: {
-        //position: 'absolute',
-        //height: 10,
-        //marginHorizontal: 30,
-        backgroundColor: '#1069FA'
+    modalAddTask: {
+        height: 150,
+        backgroundColor: '#3E3364',
+    },
+    saveButton: {
+        alignSelf:'flex-end',
+        margin:5,
     },
     addbutton: {
         borderRadius : 100,
