@@ -1,7 +1,9 @@
 import {useState} from 'react'
-import { StyleSheet, TextInput, Button, View, ScrollView, Modal, TouchableOpacity, Text } from 'react-native';
+import { StyleSheet, TextInput, Pressable, View, ScrollView, Modal, TouchableOpacity, Text } from 'react-native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateField from 'react-native-datefield';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
 import { ItemTaskList } from '..';
 
 function TaskScreen(){
@@ -11,7 +13,7 @@ function TaskScreen(){
     const [taskDate, onChangeTaskDate] = useState('');
 
     return (
-        <View >
+        <View style={{flex:1,backgroundColor:'#daceeb'}}>
             <Modal
                 animationType="slide"
                 transparent={true}
@@ -36,7 +38,8 @@ function TaskScreen(){
                                     checked : false,
                                     title : taskTitle,
                                     description : taskDescription,
-                                    date : taskDate
+                                    date : taskDate,
+                                    tag : 'N',
                                 })
                                 const listTasks = JSON.stringify(Tasks)
                                 idString = (Id+1).toString()
@@ -57,9 +60,15 @@ function TaskScreen(){
                     </View>
                 </View>
             </Modal>
-            <Button  title='add' onPress={() => setModalVisible(!modalVisible)}/>
+            <ItemTaskList/>
+            <View style={styles.addbuttoncontainer}>
+            <TouchableOpacity onPress={() => setModalVisible(!modalVisible)} style={styles.addbutton}>
+                <Ionicons name="add" size={50} color='#fff' style={{alignItems:'center'}}></Ionicons>
+            </TouchableOpacity>
+            </View>
+            
             {/*clear button pour nettoyer asyncstorage
-                <Button  title='clear' onPress={
+            <Button  title='clear' onPress={
                 async () => {
                     try {
                         await AsyncStorage.clear()
@@ -69,7 +78,7 @@ function TaskScreen(){
                     console.log('Done.')
                 }
             }/> */}
-            <ItemTaskList/>
+            
         </View>
     );
 }
@@ -83,6 +92,17 @@ const styles = StyleSheet.create({
         //height: 10,
         //marginHorizontal: 30,
         backgroundColor: '#1069FA'
+    },
+    addbutton: {
+        borderRadius : 100,
+        height : 50,
+        width :50,
+        backgroundColor: '#3E3364',
+    },
+    addbuttoncontainer: {
+        flex : 1,
+        alignItems : 'center',
+        justifyContent : 'flex-end'
     }
 })
 
